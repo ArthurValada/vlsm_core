@@ -12,7 +12,7 @@ class IPv4{
 
   String _addressValidation(String address){
     address = address.replaceAll(' ', '');
-    if(address.split('').where((element) => element=='.').length!=3 || address.length<7){
+    if(address.split('').where((element) => element=='.').length!=3 || address.length<7 || address.split('.').length!=4){
       throw FormatException("A ip network address inserted string is not properly formatted.");
     }
     return address;
@@ -33,7 +33,7 @@ class IPv4{
 
   String _subnetMaskValidation(String subnetMask){
     subnetMask = subnetMask.replaceAll(' ', '');
-    if(subnetMask.split(''). where((element) => element=='.').length!=3 || subnetMask.length<7){
+    if(subnetMask.split(''). where((element) => element=='.').length!=3 || subnetMask.length<7 || address.split('.').length!=4){
       throw FormatException("A subnet mask address inserted string is not properly formatted.");
     }
     return subnetMask;
@@ -63,9 +63,9 @@ class IPv4{
 
   //Formated to Octet
 
-  List<int> _octetAddressFormatation(String address)=>address.split('.').map((e) => int.tryParse(e)??0).toList();
+  List<int> _octetAddressFormatting(String address)=>address.split('.').map((e) => int.tryParse(e)??0).toList();
   
-  List<int> _octetSubnetMaskFormatation(String subnetMask) => subnetMask.split('.').map((e) => int.tryParse(e)??0).toList();
+  List<int> _octetSubnetMaskFormatting(String subnetMask) => subnetMask.split('.').map((e) => int.tryParse(e)??0).toList();
 
   //Octet to formated
   String _octetdAddressToFormatedAddress(List<int> octetAddress)=>octetAddress.map((element)=>element.toString()).join('.');
@@ -126,8 +126,8 @@ class IPv4{
     _prefix=_formatedSubnetMaskToFormatedPrefix(_subnetMask);
     _prefixNumber = _formatedPrefixToPrefixNumber(_prefix);
 
-    _octetAddress = _octetAddressFormatation(_address);
-    _octetSubnetMask = _octetSubnetMaskFormatation(_subnetMask);
+    _octetAddress = _octetAddressFormatting(_address);
+    _octetSubnetMask = _octetSubnetMaskFormatting(_subnetMask);
   }
 
   IPv4.withPrefix({required String address, required String prefix}){
@@ -137,8 +137,8 @@ class IPv4{
 
     _subnetMask=_formatedPrefixToFormatedSubnetMask(_prefix);
 
-    _octetAddress= _octetAddressFormatation(_address);
-    _octetSubnetMask = _octetSubnetMaskFormatation(_subnetMask);
+    _octetAddress= _octetAddressFormatting(_address);
+    _octetSubnetMask = _octetSubnetMaskFormatting(_subnetMask);
     _prefixNumber=_formatedPrefixToPrefixNumber(_prefix);
   }
 
@@ -148,8 +148,8 @@ class IPv4{
     _address = _addressValidation(listOfOctets.map((e) => e.toString()).join('.'));
     _subnetMask = _subnetMaskValidation(subnetMask);
 
-    _octetAddress=_octetAddressFormatation(_address);
-    _octetSubnetMask = _octetSubnetMaskFormatation(_subnetMask);
+    _octetAddress=_octetAddressFormatting(_address);
+    _octetSubnetMask = _octetSubnetMaskFormatting(_subnetMask);
     _prefixNumber = _octetSubnetMaskToPrefixNumber(_octetSubnetMask);
     _prefix = _prefixNumberToFormatedPrefix(_prefixNumber);
   }
@@ -172,7 +172,7 @@ class IPv4{
 
     _prefix = _prefixNumberToFormatedPrefix(prefix);
 
-    _octetAddress =_octetAddressFormatation(_address);
+    _octetAddress =_octetAddressFormatting(_address);
     _octetSubnetMask = _formatedPrefixToOctetSubnetMask(_prefix);
   }
 
@@ -184,9 +184,9 @@ class IPv4{
     _prefix = _prefixNumberToFormatedPrefix(prefixNumeric);
     _prefixNumber=_prefixNumberValidation(prefixNumeric);
 
-    _octetAddress = _octetAddressFormatation(address);
+    _octetAddress = _octetAddressFormatting(address);
     _subnetMask = _formatedPrefixToFormatedSubnetMask(_prefix);
-    _octetSubnetMask = _octetSubnetMaskFormatation(_subnetMask);
+    _octetSubnetMask = _octetSubnetMaskFormatting(_subnetMask);
 
   }
 
@@ -243,10 +243,9 @@ class IPv4{
   IPv4 operator - (int value){
     List<int> localOctetAddress = _octetAddress;
     localOctetAddress.last-=value;
-    // [192,168,0,-5]
     for(int i in [3,2,1]){
       if(localOctetAddress[i]<0){
-        localOctetAddress[i-1]-=localOctetAddress[i].abs()~/256+1;
+        localOctetAddress[i-1]-=(localOctetAddress[i].abs()~/256)+1;
         localOctetAddress[i]+=(localOctetAddress[i].abs()~/256+1)*256;
       }
     }
