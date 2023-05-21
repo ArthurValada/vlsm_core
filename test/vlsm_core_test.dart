@@ -6,9 +6,6 @@ import 'package:vlsm_core/ipv4_address.dart';
 void main() {
 
   group("Test properties of the object constructed with the default constructor.", (){
-    setUp(() => null);
-
-    tearDown(() => null);
 
     test("Address property test.", () => expect(IPv4(address: "192.168.0.0", subnetMask: "255.255.255.0").address, equals('192.168.0.0')));
     test("Address octect list property test.", () => expect(IPv4(address: "192.168.0.0", subnetMask: "255.255.255.0").addressListOfOctets, equals([192,168,0,0])));
@@ -42,16 +39,9 @@ void main() {
   });
 
   group("IPV4 class arithmetic tests", (){
-    
-    setUp(() => null);
-
-    tearDown(() => null);
 
     group("Section of addition methods.", (){
 
-      setUp(() => null);
-
-      tearDown(() => null);
       test("Unit addition method test.",() => expect((IPv4.withPrefix(address: "192.168.10.0", prefix: "/24")+1).address, equals('192.168.10.1')));
 
       test("Octet addition test.",() => expect((IPv4.withPrefix(address: "192.168.10.0", prefix: "/24")+256).address, equals("192.168.11.0")));
@@ -65,9 +55,7 @@ void main() {
     });
 
     group("Subtraction Methods Section.", (){
-      setUp(() => null);
-
-      tearDown(() => null);
+      
       test("Unit subtraction method test.",() => expect((IPv4(address: "192.168.0.1", subnetMask: "255.255.255.0")-1).address,equals("192.168.0.0")));
 
       test("Octet subtraction test.",() => expect((IPv4(address: "192.168.0.1", subnetMask: "255.255.255.0")-256).address, equals("192.167.255.1")));
@@ -81,8 +69,46 @@ void main() {
     });
   });
 
-  //Test of size of a network
-  for(int i in List<int>.generate(33, (index) => index)){
-    test("Network size test with prefix /$i.", () => expect(IPv4.withFormatedNetworkAddressAndNumericPrefix(address: "192.168.10.0", prefix: i).size, equals(pow(2,32-i))));
-  }
+  group("Group of tests on the correct relief between prefix length and network size.", (){
+    for(int i in List<int>.generate(33, (index) => index)){
+      test("Teste com o prefixo /$i",() => expect(IPv4.withFormatedNetworkAddressAndNumericPrefix(address: "192.168.0.0", prefix: i).size, equals(pow(2,32-i).toInt())));
+    }
+  });
+
+  group("Relational operators test.", (){
+
+    group("Operator tests less than.", (){
+      
+      test("Test to give true.", () => expect(IPv4(address: "192.168.0.0", subnetMask: "255.255.255.0")<IPv4(address:"192.168.0.1", subnetMask: "255.255.255.0"), equals(true)));
+
+      test("Test to give false.", () => expect(IPv4(address: "192.168.0.1", subnetMask: "255.255.255.0")<IPv4(address:"192.168.0.0", subnetMask: "255.255.255.0"), equals(false)));
+
+    });
+
+    group("Tests to the operator greater than.", (){
+
+      test("Test to give true.", () => expect(IPv4(address: "192.168.0.1", subnetMask: "255.255.255.0")>IPv4(address: "192.168.0.0", subnetMask: "255.255.255.0"), equals(true)));
+
+      test("Test to give false.", () => expect(IPv4(address: "192.168.0.0", subnetMask: "255.255.255.0")>IPv4(address: "192.168.0.1", subnetMask: "255.255.255.0"), equals(false)));
+
+    });
+
+    group("Smaller or equal operator tests.", (){
+
+      test("Testing if it is smaller.", () => expect(IPv4(address: "192.168.0.0", subnetMask: "255.255.255.0")<=IPv4(address: "192.168.0.1", subnetMask: "255.255.255.0"), equals(true)));
+
+      test("Testing if it's the same.", () => expect(IPv4(address: "192.168.0.0", subnetMask: "255.255.255.0")<=IPv4(address: "192.168.0.0", subnetMask: "255.255.255.0"), equals(true)));
+
+      test("Testing if it is not smaller or equal.", () => expect(IPv4(address: "192.168.0.0", subnetMask: "255.255.255.0")<=IPv4(address: "192.167.0.1", subnetMask: "255.255.255.0"), equals(false)));
+
+    });
+
+    group("Testing the operator greater or equal.", (){
+      test("Testing if it's bigger.", () => expect(IPv4(address: "192.168.0.0", subnetMask: "255.255.255.0")>=IPv4(address: "192.167.0.0", subnetMask: "255.255.255.0"), equals(true)));
+
+      test("Testing if it's the same.", () => expect(IPv4(address: "192.168.0.0", subnetMask: "255.255.255.0")>=IPv4(address: "192.168.0.0", subnetMask: "255.255.255.0"), equals(true)));
+
+      test("Testing if it is not larger or equal.",() => expect(IPv4(address: "192.167.0.0", subnetMask: "255.255.255.0")>=IPv4(address: "192.168.0.0", subnetMask: "255.255.255.0"), equals(false)));
+    });
+  });
 }

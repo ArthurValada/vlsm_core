@@ -174,6 +174,7 @@ class IPv4{
 
     _octetAddress =_octetAddressFormatting(_address);
     _octetSubnetMask = _formatedPrefixToOctetSubnetMask(_prefix);
+    _subnetMask=_prefixNumberToFormatedSubnetMask(_prefixNumber);
   }
 
   IPv4.withFormatedAddress({required String formatedAddress}){
@@ -226,8 +227,8 @@ class IPv4{
 
 
   IPv4 operator +(int value){
-    List<int> localOctetAddress = _octetAddress;
-    localOctetAddress[3]+=value;
+    List<int> localOctetAddress = [..._octetAddress];
+    localOctetAddress.last+=value;
     for(int i in [3,2,1]){
       if(localOctetAddress[i]>=256){
         localOctetAddress[i-1]+=localOctetAddress[i]~/256;
@@ -241,12 +242,13 @@ class IPv4{
   }
 
   IPv4 operator - (int value){
-    List<int> localOctetAddress = _octetAddress;
+    List<int> localOctetAddress = [..._octetAddress];
     localOctetAddress.last-=value;
     for(int i in [3,2,1]){
       if(localOctetAddress[i]<0){
-        localOctetAddress[i-1]-=(localOctetAddress[i].abs()~/256)+1;
-        localOctetAddress[i]+=(localOctetAddress[i].abs()~/256+1)*256;
+        int temp = localOctetAddress[i].abs()/256 == (localOctetAddress[i].abs()~/256).toDouble() ? localOctetAddress[i].abs()~/256 : (localOctetAddress[i].abs()~/256)+1;
+        localOctetAddress[i-1]-=temp;
+        localOctetAddress[i]+=temp*256;
       }
     }
     if(localOctetAddress.first<0){
@@ -256,20 +258,26 @@ class IPv4{
   }
 
   bool operator<(IPv4 that){
-    List<int> local = that.addressListOfOctets;
-    for(int i=0;i<4;i++){
+    List<int> local = [...that.addressListOfOctets];
+    for(int i in [0,1,2,3]){
       if(_octetAddress[i]<local[i]){
         return true;
+      }
+      else if(_octetAddress[i]>local[i]){
+        return false;
       }
     }
     return false;
   }
 
   bool operator>(IPv4 that){
-    List<int> local = that.addressListOfOctets;
-    for(int i=0;i<4;i++){
+    List<int> local = [...that.addressListOfOctets];
+    for(int i in [0,1,2,3]){
       if(_octetAddress[i]>local[i]){
         return true;
+      }
+      else if(_octetAddress[i]<local[i]){
+        return false;
       }
     }
     return false;
@@ -290,7 +298,11 @@ class IPv4{
 
   @override
   bool operator ==(Object other){
-    return identical(this, other) ||other is IPv4 && runtimeType == other.runtimeType && other.addressListOfOctets.every((element) => _octetAddress[other.addressListOfOctets.indexOf(element)]==element);
+    if(other is IPv4){
+      List<int> local = [...other._octetAddress];
+      return _octetAddress.asMap().entries.every((element) => element.value == local[element.key]);
+    }
+    return false;
   }
 
   @override
