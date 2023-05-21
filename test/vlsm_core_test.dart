@@ -110,5 +110,7 @@ void main() {
 
       test("Testing if it is not larger or equal.",() => expect(IPv4(address: "192.167.0.0", subnetMask: "255.255.255.0")>=IPv4(address: "192.168.0.0", subnetMask: "255.255.255.0"), equals(false)));
     });
+
+    test("Testando o operador de igualdade.",() =>  expect(IPv4(address: "192.168.0.1", subnetMask: "255.255.255.0")==IPv4(address: "192.168.0.1", subnetMask: "255.255.255.0"), equals(true)));
   });
 }

@@ -16,4 +16,8 @@ class IPv4Network extends IPv4{
   List<IPv4> get ipAddresses => List<IPv4>.generate(size-2, (index) => this+(index+1));
 
   IPv4 get broadcast => this+size-1;
+
+  isIn(IPv4 address){
+    return ipAddresses.any((element) => element == address);
+  }
 }
