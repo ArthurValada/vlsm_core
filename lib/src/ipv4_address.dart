@@ -4,8 +4,6 @@
 import 'dart:math';
 import 'package:vlsm_core/src/vlsm_core_exceptions.dart';
 
-//
-
 class IPv4{
 
   late String _address, _subnetMask, _prefix;

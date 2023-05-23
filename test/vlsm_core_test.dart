@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:test/test.dart';
-import 'package:vlsm_core/ipv4_address.dart';
+import 'package:vlsm_core/vlsm_core.dart';
 
 void main() {
 
